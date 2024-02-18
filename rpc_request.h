@@ -9,7 +9,7 @@ class RPCRequest : public Node {
   GDCLASS(RPCRequest, Node);
 
   HTTPRequest *http_request = nullptr;
-  void _request_completed(int p_status, int p_code, const PoolStringArray &headers, const PoolByteArray &p_data);
+  void _request_completed(int p_status, int p_code, const PackedStringArray &headers, const PackedByteArray &p_data);
 
 protected:
   static void _bind_methods();

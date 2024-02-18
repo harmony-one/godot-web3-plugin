@@ -2,7 +2,7 @@
 #define ABI_H
 
 #include "core/io/resource_loader.h"
-#include "core/resource.h"
+#include "core/io/resource.h"
 
 class ABI : public Resource {
   GDCLASS(ABI, Resource);

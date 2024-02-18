@@ -3,14 +3,14 @@
 #include "keccak.h"
 
 #include "core/io/json.h"
-#include "core/os/file_access.h"
+#include "core/io/file_access.h"
 
 String ABI::encode_uint256(const int p_value) {
   return String::num_int64(p_value, 16).lpad(64, "0");
 }
 
 int ABI::decode_uint256(const String &p_value) {
-  return p_value.hex_to_int(false);
+  return p_value.hex_to_int();
 }
 
 String ABI::encode_address(const String &p_address) {
@@ -93,14 +93,14 @@ Array ABI::decode_function(const String &p_name, const String &p_value) {
       int value = decode_uint256(data);
       out.push_back(value);
     } else if (output.type == "address[]") {
-      int offset = enc.substr(i * 64, 64).hex_to_int(false);
-      int length = enc.substr(offset * 2, 64).hex_to_int(false);
+      int offset = enc.substr(i * 64, 64).hex_to_int();
+      int length = enc.substr(offset * 2, 64).hex_to_int();
       String data = enc.substr(offset * 2 + 64, length * 64);
       Array value = decode_array(data, length, "address");
       out.push_back(value);
     } else if (output.type == "uint256[]") {
-      int offset = enc.substr(i * 64, 64).hex_to_int(false);
-      int length = enc.substr(offset * 2, 64).hex_to_int(false);
+      int offset = enc.substr(i * 64, 64).hex_to_int();
+      int length = enc.substr(offset * 2, 64).hex_to_int();
       String data = enc.substr(offset * 2 + 64, length * 64);
       Array value = decode_array(data, length, "uint256");
       out.push_back(value);

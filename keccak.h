@@ -1,10 +1,10 @@
 #ifndef KECCAK_H
 #define KECCAK_H
 
-#include "core/reference.h"
+#include "core/object/ref_counted.h"
 
-class Keccak : public Reference {
-  GDCLASS(Keccak, Reference);
+class Keccak : public RefCounted {
+  GDCLASS(Keccak, RefCounted);
 
 private:
   void *ctx;
@@ -15,8 +15,8 @@ protected:
 public:
   static void hash(const unsigned char* p_data, int p_len, unsigned char r_digest[32]);
 
-  Error update(PoolByteArray p_chunk);
-  PoolByteArray finish();
+  Error update(PackedByteArray p_chunk);
+  PackedByteArray finish();
 
   Keccak();
   ~Keccak();
