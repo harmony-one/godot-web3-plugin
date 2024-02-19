@@ -10,7 +10,7 @@ Error Keccak::update(PackedByteArray p_chunk) {
   ERR_FAIL_COND_V(ctx == nullptr, ERR_UNCONFIGURED);
   size_t len = p_chunk.size();
   ERR_FAIL_COND_V(len == 0, FAILED);
-  PackedByteArray::Read r = p_chunk.read();
+  PackedByteArray r = p_chunk;
   keccak_Update((SHA3_CTX *)ctx, &r[0], len);
   return OK;
 }

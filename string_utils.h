@@ -1,7 +1,7 @@
 #ifndef STRING_UTILS_H
 #define STRING_UTILS_H
 
-#include "core/variant.h"
+#include "core/variant/variant.h"
 
 class StringUtils {
 public:

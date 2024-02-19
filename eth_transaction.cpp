@@ -75,7 +75,7 @@ void EthTransaction::_estimate_gas_request_completed(int p_status, const Diction
   }
 
   PackedByteArray rlp = transaction->encode();
-  String rlp_hex = String::hex_encode_buffer(rlp.read().ptr(), rlp.size());
+  String rlp_hex = String::hex_encode_buffer(rlp.ptr(), rlp.size());
 
   Array params;
   params.push_back("0x" + rlp_hex);
