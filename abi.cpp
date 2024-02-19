@@ -111,11 +111,9 @@ Array ABI::decode_function(const String &p_name, const String &p_value) {
 }
 
 Error ABI::parse(const String &p_json) {
-  String error_string;
-  int error_line;
   Variant json;
-
-  Error error = JSON::parse(p_json, json, error_string, error_line);
+  JSON pj;
+  Error error = pj.parse(p_json, true);
   ERR_FAIL_COND_V(error, error);
 
   Array entries = json;
