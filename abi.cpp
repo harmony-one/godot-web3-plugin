@@ -182,8 +182,8 @@ void ABI::_bind_methods() {
 
 // ResourceFormatLoader
 
-RES ResourceFormatLoaderABI::load(const String &p_path, const String &p_original_path, Error *r_error, bool p_no_subresource_cache) {
-  Vector<uint8_t> buffer = FileAccess::get_file_as_array(p_path);
+Ref<ABI> ResourceFormatLoaderABI::load(const String &p_path, const String &p_original_path, Error *r_error, bool p_no_subresource_cache) {
+  Vector<uint8_t> buffer = FileAccess::get_file_as_bytes(p_path);
 
   String str;
   str.parse_utf8((const char *)buffer.ptr(), buffer.size());
