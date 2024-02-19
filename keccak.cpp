@@ -6,18 +6,18 @@ void Keccak::hash(const unsigned char* p_data, int p_len, unsigned char r_digest
   keccak_256(p_data, p_len, r_digest);
 }
 
-Error Keccak::update(PoolByteArray p_chunk) {
+Error Keccak::update(PackedByteArray p_chunk) {
   ERR_FAIL_COND_V(ctx == nullptr, ERR_UNCONFIGURED);
   size_t len = p_chunk.size();
   ERR_FAIL_COND_V(len == 0, FAILED);
-  PoolByteArray::Read r = p_chunk.read();
+  PackedByteArray::Read r = p_chunk.read();
   keccak_Update((SHA3_CTX *)ctx, &r[0], len);
   return OK;
 }
 
-PoolByteArray Keccak::finish() {
-  ERR_FAIL_COND_V(ctx == nullptr, PoolByteArray());
-  PoolByteArray out;
+PackedByteArray Keccak::finish() {
+  ERR_FAIL_COND_V(ctx == nullptr, PackedByteArray());
+  PackedByteArray out;
   out.resize(32);
   keccak_Final((SHA3_CTX *)ctx, out.write().ptr());
   return out;

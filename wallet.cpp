@@ -11,7 +11,7 @@ String Wallet::get_address() const {
 }
 
 Error Wallet::set_private_key(const String &p_private_key) {
-  PoolByteArray private_key_hex = StringUtils::hex_to_bytes(p_private_key);
+  PackedByteArray private_key_hex = StringUtils::hex_to_bytes(p_private_key);
 
   ERR_FAIL_COND_V_MSG(private_key_hex.size() != 32, ERR_INVALID_PARAMETER, "Private key must be 32 bytes.");
   memcpy(private_key, private_key_hex.read().ptr(), 32);
@@ -29,7 +29,7 @@ Error Wallet::set_private_key(const String &p_private_key) {
 }
 
 Error Wallet::sign_transaction(Transaction &p_transaction) {
-  PoolByteArray rlp = p_transaction.encode();
+  PackedByteArray rlp = p_transaction.encode();
 
   uint8_t hash[32];
   Keccak::hash(rlp.read().ptr(), rlp.size(), hash);

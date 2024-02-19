@@ -17,7 +17,7 @@ Error RPCRequest::request(const String &p_method, const Array &p_params) {
   return http_request->request(url, Vector<String>(), true, HTTPClient::METHOD_POST, JSON::print(data));
 }
 
-void RPCRequest::_request_completed(int p_status, int p_code, const PoolStringArray &headers, const PoolByteArray &p_data) {
+void RPCRequest::_request_completed(int p_status, int p_code, const PoolStringArray &headers, const PackedByteArray &p_data) {
   if (p_status != HTTPRequest::RESULT_SUCCESS || p_code != 200) {
     emit_signal("request_completed", RESULT_HTTP_ERROR, Dictionary());
     return;

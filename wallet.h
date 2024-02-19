@@ -1,12 +1,12 @@
 #ifndef WALLET_H
 #define WALLET_H
 
-#include "core/reference.h"
+#include "core/object/ref_counted.h"
 
 #include "transaction.h"
 
-class Wallet : public Reference {
-  GDCLASS(Wallet, Reference);
+class Wallet : public RefCounted {
+  GDCLASS(Wallet, RefCounted);
 
   String address;
   uint8_t private_key[32];
