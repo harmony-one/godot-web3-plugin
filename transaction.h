@@ -1,12 +1,12 @@
 #ifndef TRANSACTION_H
 #define TRANSACTION_H
 
-#include "core/reference.h"
+#include "core/object/ref_counted.h"
 
 #include "rlp.h"
 
-class Transaction : public Reference {
-  GDCLASS(Transaction, Reference);
+class Transaction : public RefCounted {
+  GDCLASS(Transaction, RefCounted);
 
   String nonce;
   String gas_price;
@@ -60,7 +60,7 @@ public:
   void set_hash(const String &p_hash);
   String get_hash() const;
 
-  PoolByteArray encode();
+  PackedByteArray encode();
 };
 
 #endif // TRANSACTION_H

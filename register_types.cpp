@@ -10,8 +10,8 @@
 #include "transaction.h"
 #include "wallet.h"
 
-#include "core/class_db.h"
-#include "core/project_settings.h"
+#include "core/object/class_db.h"
+#include "core/config/project_settings.h"
 
 static Ref<ResourceFormatLoaderABI> abi_loader;
 
@@ -26,7 +26,7 @@ void register_web3_types() {
    ClassDB::register_class<Transaction>();
    ClassDB::register_class<Wallet>();
 
-   abi_loader.instance();
+   abi_loader.instantiate();
    ResourceLoader::add_resource_format_loader(abi_loader);
 
    GLOBAL_DEF("web3/rpc_url", "");

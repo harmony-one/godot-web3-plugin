@@ -22,5 +22,5 @@ void EthBalance::_bind_methods() {
 EthBalance::EthBalance() {
   rpc_request = memnew(RPCRequest);
   add_child(rpc_request);
-  rpc_request->connect("request_completed", this, "_request_completed");
+  rpc_request->connect("request_completed", callable_mp(this, &EthBalance::_request_completed));
 }

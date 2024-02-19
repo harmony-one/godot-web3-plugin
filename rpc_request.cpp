@@ -1,36 +1,34 @@
 #include "rpc_request.h"
 
 #include "core/io/json.h"
-#include "core/project_settings.h"
+#include "core/config/project_settings.h"
 #include "scene/main/http_request.h"
 
 Error RPCRequest::request(const String &p_method, const Array &p_params) {
   String url = GLOBAL_GET("web3/rpc_url");
-  ERR_FAIL_COND_V_MSG(url.empty(), ERR_UNCONFIGURED, "RPC URL is empty in project settings.");
+  ERR_FAIL_COND_V_MSG(url.is_empty(), ERR_UNCONFIGURED, "RPC URL is empty in project settings.");
 
-  Dictionary data;
-  data["id"] = 1;
-  data["jsonrpc"] = "2.0";
-  data["method"] = p_method;
-  data["params"] = p_params;
-
-  return http_request->request(url, Vector<String>(), true, HTTPClient::METHOD_POST, JSON::print(data));
+  Dictionary ddata;
+  ddata["id"] = 1;
+  ddata["jsonrpc"] = "2.0";
+  ddata["method"] = p_method;
+  ddata["params"] = p_params;
+  JSON parsed;
+  return http_request->request(url, Vector<String>(), true, HTTPClient::METHOD_POST, JSON::print(ddata));
 }
 
-void RPCRequest::_request_completed(int p_status, int p_code, const PoolStringArray &headers, const PoolByteArray &p_data) {
+void RPCRequest::_request_completed(int p_status, int p_code, const PackedStringArray &headers, const PackedByteArray &p_data) {
   if (p_status != HTTPRequest::RESULT_SUCCESS || p_code != 200) {
     emit_signal("request_completed", RESULT_HTTP_ERROR, Dictionary());
     return;
   }
 
   String response_json;
-  response_json.parse_utf8((const char *)p_data.read().ptr(), p_data.size());
+  response_json.parse_utf8((const char *)p_data.ptr(), p_data.size());
 
   Variant json;
-  String errs;
-  int errline;
-
-  Error err = JSON::parse(response_json, json, errs, errline);
+  JSON rj;
+  Error err = rj.parse(response_json, true);
   if (err != OK) {
     emit_signal("request_completed", RESULT_JSON_ERROR, Dictionary());
     return;
@@ -59,5 +57,5 @@ void RPCRequest::_bind_methods() {
 RPCRequest::RPCRequest() {
   http_request = memnew(HTTPRequest);
   add_child(http_request);
-  http_request->connect("request_completed", this, "_request_completed");
+  http_request->connect("request_completed", callable_mp(this, &RPCRequest::_request_completed));
 }

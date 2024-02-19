@@ -2,7 +2,7 @@
 
 Error EthCall::request(const String &p_name, const Array &p_inputs) {
   ERR_FAIL_COND_V_MSG(!contract_abi.is_valid(), ERR_UNCONFIGURED, "Contract ABI is undefined.");
-  ERR_FAIL_COND_V_MSG(contract_address.empty(), ERR_UNCONFIGURED, "Contract address is empty.");
+  ERR_FAIL_COND_V_MSG(contract_address.length()==0, ERR_UNCONFIGURED, "Contract address is empty.");
 
   function_name = p_name;
 
@@ -58,5 +58,5 @@ void EthCall::_bind_methods() {
 EthCall::EthCall() {
   rpc_request = memnew(RPCRequest);
   add_child(rpc_request);
-  rpc_request->connect("request_completed", this, "_request_completed");
+  rpc_request->connect("request_completed",  callable_mp(this, &EthCall::_request_completed));
 }

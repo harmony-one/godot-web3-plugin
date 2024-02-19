@@ -3,14 +3,14 @@
 #include "keccak.h"
 
 #include "core/io/json.h"
-#include "core/os/file_access.h"
+#include "core/io/file_access.h"
 
 String ABI::encode_uint256(const int p_value) {
   return String::num_int64(p_value, 16).lpad(64, "0");
 }
 
 int ABI::decode_uint256(const String &p_value) {
-  return p_value.hex_to_int(false);
+  return p_value.hex_to_int();
 }
 
 String ABI::encode_address(const String &p_address) {
@@ -93,14 +93,14 @@ Array ABI::decode_function(const String &p_name, const String &p_value) {
       int value = decode_uint256(data);
       out.push_back(value);
     } else if (output.type == "address[]") {
-      int offset = enc.substr(i * 64, 64).hex_to_int(false);
-      int length = enc.substr(offset * 2, 64).hex_to_int(false);
+      int offset = enc.substr(i * 64, 64).hex_to_int();
+      int length = enc.substr(offset * 2, 64).hex_to_int();
       String data = enc.substr(offset * 2 + 64, length * 64);
       Array value = decode_array(data, length, "address");
       out.push_back(value);
     } else if (output.type == "uint256[]") {
-      int offset = enc.substr(i * 64, 64).hex_to_int(false);
-      int length = enc.substr(offset * 2, 64).hex_to_int(false);
+      int offset = enc.substr(i * 64, 64).hex_to_int();
+      int length = enc.substr(offset * 2, 64).hex_to_int();
       String data = enc.substr(offset * 2 + 64, length * 64);
       Array value = decode_array(data, length, "uint256");
       out.push_back(value);
@@ -111,11 +111,9 @@ Array ABI::decode_function(const String &p_name, const String &p_value) {
 }
 
 Error ABI::parse(const String &p_json) {
-  String error_string;
-  int error_line;
   Variant json;
-
-  Error error = JSON::parse(p_json, json, error_string, error_line);
+  JSON pj;
+  Error error = pj.parse(p_json, true);
   ERR_FAIL_COND_V(error, error);
 
   Array entries = json;
@@ -184,8 +182,8 @@ void ABI::_bind_methods() {
 
 // ResourceFormatLoader
 
-RES ResourceFormatLoaderABI::load(const String &p_path, const String &p_original_path, Error *r_error, bool p_no_subresource_cache) {
-  Vector<uint8_t> buffer = FileAccess::get_file_as_array(p_path);
+Ref<ABI> ResourceFormatLoaderABI::load(const String &p_path, const String &p_original_path, Error *r_error, bool p_no_subresource_cache) {
+  Vector<uint8_t> buffer = FileAccess::get_file_as_bytes(p_path);
 
   String str;
   str.parse_utf8((const char *)buffer.ptr(), buffer.size());

@@ -88,8 +88,8 @@ String Transaction::get_hash() const {
   return hash;
 }
 
-PoolByteArray Transaction::encode() {
-  PoolByteArray list;
+PackedByteArray Transaction::encode() {
+  PackedByteArray list;
   list.append_array(rlp.encode(nonce));
   list.append_array(rlp.encode(gas_price));
   list.append_array(rlp.encode(gas_limit));
@@ -100,7 +100,7 @@ PoolByteArray Transaction::encode() {
   list.append_array(rlp.encode(r));
   list.append_array(rlp.encode(s));
 
-  PoolByteArray out;
+  PackedByteArray out;
   out.append_array(rlp.encode_length(list.size(), 192));
   out.append_array(list);
 

@@ -1,19 +1,19 @@
 #ifndef RLP_H
 #define RLP_H
 
-#include "core/reference.h"
+#include "core/object/ref_counted.h"
 
-class RLP : public Reference {
-  GDCLASS(RLP, Reference);
+class RLP : public RefCounted {
+  GDCLASS(RLP, RefCounted);
 
-  PoolByteArray hex_to_bytes(const String &p_hex);
+  PackedByteArray hex_to_bytes(const String &p_hex);
 
 protected:
   static void _bind_methods();
 
 public:
-  PoolByteArray encode_length(int length, int offset);
-  PoolByteArray encode(const String &p_hex);
+  PackedByteArray encode_length(int length, int offset);
+  PackedByteArray encode(const String &p_hex);
 };
 
 #endif // RLP_H
