@@ -7,11 +7,12 @@ Godot plugin for building web3 games.
 ## Building
 
 ### Godot 3.5
-In godot Checkout branch 3.5
 
 Clone `godot` and copy sources to `modules/web3`.
+In godot,  Checkout branch 3.5
 
 ```
+Directory Structure:
 |-- godot
 |-- modules
 |   |-- web3
