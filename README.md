@@ -4,6 +4,10 @@
 
 Godot plugin for building web3 games.
 
+Currently supported under Ubuntu 22 and MacOS Platforms.
+
+Windows builds are still WIP
+
 ## Building
 
 ### Godot 3.5
@@ -21,7 +25,11 @@ Directory Structure:
 Build from `godot` root.
 
 ```bash
+MACOS
 scons custom_modules=../modules platform=osx arch=arm64 --jobs=$(sysctl -n hw.logicalcpu)
+
+Ubuntu 22
+scons custom_modules=../modules --jobs=$(sysctl -n hw.logicalcpu)
 ```
 
 ### Godot 4.2
