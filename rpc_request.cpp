@@ -1,6 +1,6 @@
 #include "rpc_request.h"
 
-#include "thirdparty/json.h"
+#include "core/io/json.h"
 #include "core/config/project_settings.h"
 #include "scene/main/http_request.h"
 
