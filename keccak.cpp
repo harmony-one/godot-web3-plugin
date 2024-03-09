@@ -19,7 +19,7 @@ PackedByteArray Keccak::finish() {
   ERR_FAIL_COND_V(ctx == nullptr, PackedByteArray());
   PackedByteArray out;
   out.resize(32);
-  keccak_Final((SHA3_CTX *)ctx, out.write().ptr());
+  keccak_Final((SHA3_CTX *)ctx, (unsigned char*) out.ptr());
   return out;
 }
 

@@ -1,6 +1,6 @@
 #include "rpc_request.h"
 
-#include "thirdparty/json.h"
+#include "core/io/json.h"
 #include "core/config/project_settings.h"
 #include "scene/main/http_request.h"
 
@@ -14,7 +14,7 @@ Error RPCRequest::request(const String &p_method, const Array &p_params) {
   ddata["method"] = p_method;
   ddata["params"] = p_params;
   JSON parsed;
-  return http_request->request(url, Vector<String>(), HTTPClient::METHOD_POST, JSON::print(ddata));
+  return http_request->request(url, Vector<String>(), HTTPClient::METHOD_POST, stringify_variants(ddata));
 }
 
 void RPCRequest::_request_completed(int p_status, int p_code, const PackedStringArray &headers, const PackedByteArray &p_data) {
