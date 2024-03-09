@@ -96,7 +96,7 @@ PackedByteArray Transaction::encode() {
   list.append_array(rlp.encode(to));
   list.append_array(rlp.encode(value));
   list.append_array(rlp.encode(data));
-  list.append_array(rlp.encode(v.empty() ? chain_id : v));
+  list.append_array(rlp.encode(v.is_empty() ? chain_id : v));
   list.append_array(rlp.encode(r));
   list.append_array(rlp.encode(s));
 
