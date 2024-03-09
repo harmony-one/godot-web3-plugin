@@ -14,7 +14,7 @@ Error Wallet::set_private_key(const String &p_private_key) {
   PackedByteArray private_key_hex = StringUtils::hex_to_bytes(p_private_key);
 
   ERR_FAIL_COND_V_MSG(private_key_hex.size() != 32, ERR_INVALID_PARAMETER, "Private key must be 32 bytes.");
-  memcpy(private_key, private_key_hex.read().ptr(), 32);
+  memcpy(private_key, private_key_hex.ptr(), 32);
   
   // get the uncompressed public key
   uint8_t public_key[65];
@@ -32,7 +32,7 @@ Error Wallet::sign_transaction(Transaction &p_transaction) {
   PackedByteArray rlp = p_transaction.encode();
 
   uint8_t hash[32];
-  Keccak::hash(rlp.read().ptr(), rlp.size(), hash);
+  Keccak::hash(rlp.ptr(), rlp.size(), hash);
 
   uint8_t pby;
   uint8_t sig[64];
@@ -41,7 +41,7 @@ Error Wallet::sign_transaction(Transaction &p_transaction) {
   ERR_FAIL_COND_V(ret, FAILED);
 
   // EIP 155 replay protection
-  int chain_id = p_transaction.get_chain_id().hex_to_int(true);
+  int chain_id = p_transaction.get_chain_id().hex_to_int();
   int v = 2 * chain_id + 35 + pby;
 
   p_transaction.set_v(String::num_int64(v, 16));
