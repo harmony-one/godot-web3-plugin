@@ -47,6 +47,86 @@ const char *JSON::tk_name[TK_MAX] = {
 	"EOF",
 };
 
+
+String JSON::print(const Variant &p_var, const String &p_indent, bool p_sort_keys) {
+	HashSet<const void *> markers;
+	return _print_var(p_var, p_indent, 0, p_sort_keys, markers);
+}
+
+String JSON::_print_var(const Variant &p_var, const String &p_indent, int p_cur_indent, bool p_sort_keys, HashSet<const const void *> &p_markers) {
+	String colon = ":";
+	String end_statement = "";
+
+	if (!p_indent.empty()) {
+		colon += " ";
+		end_statement += "\n";
+	}
+
+	switch (p_var.get_type()) {
+		case Variant::NIL:
+			return "null";
+		case Variant::BOOL:
+			return p_var.operator bool() ? "true" : "false";
+		case Variant::INT:
+			return itos(p_var);
+		case Variant::REAL:
+			return rtos(p_var);
+		case Variant::POOL_INT_ARRAY:
+		case Variant::POOL_REAL_ARRAY:
+		case Variant::POOL_STRING_ARRAY:
+		case Variant::ARRAY: {
+			String s = "[";
+			s += end_statement;
+			Array a = p_var;
+
+			ERR_FAIL_COND_V_MSG(p_markers.has(a.id()), "\"[...]\"", "Converting circular structure to JSON.");
+			p_markers.insert(a.id());
+
+			for (int i = 0; i < a.size(); i++) {
+				if (i > 0) {
+					s += ",";
+					s += end_statement;
+				}
+				s += _make_indent(p_indent, p_cur_indent + 1) + _print_var(a[i], p_indent, p_cur_indent + 1, p_sort_keys, p_markers);
+			}
+			s += end_statement + _make_indent(p_indent, p_cur_indent) + "]";
+			p_markers.erase(a.id());
+			return s;
+		};
+		case Variant::DICTIONARY: {
+			String s = "{";
+			s += end_statement;
+			Dictionary d = p_var;
+
+			ERR_FAIL_COND_V_MSG(p_markers.has(d.id()), "\"{...}\"", "Converting circular structure to JSON.");
+			p_markers.insert(d.id());
+
+			List<Variant> keys;
+			d.get_key_list(&keys);
+
+			if (p_sort_keys) {
+				keys.sort();
+			}
+
+			for (List<Variant>::Element *E = keys.front(); E; E = E->next()) {
+				if (E != keys.front()) {
+					s += ",";
+					s += end_statement;
+				}
+				s += _make_indent(p_indent, p_cur_indent + 1) + _print_var(String(E->get()), p_indent, p_cur_indent + 1, p_sort_keys, p_markers);
+				s += colon;
+				s += _print_var(d[E->get()], p_indent, p_cur_indent + 1, p_sort_keys, p_markers);
+			}
+
+			s += end_statement + _make_indent(p_indent, p_cur_indent) + "}";
+			p_markers.erase(d.id());
+			return s;
+		};
+		default:
+			return "\"" + String(p_var).json_escape() + "\"";
+	}
+}
+
 String JSON::_make_indent(const String &p_indent, int p_size) {
 	return p_indent.repeat(p_size);
 }
@@ -674,85 +754,3 @@ void ResourceFormatSaverJSON::get_recognized_extensions(const Ref<Resource> &p_r
 bool ResourceFormatSaverJSON::recognize(const Ref<Resource> &p_resource) const {
 	return p_resource->get_class_name() == "JSON"; //only json, not inherited
 }
-
-
-
-String JSON::_print_var(const Variant &p_var, const String &p_indent, int p_cur_indent, bool p_sort_keys, Set<const void *> &p_markers) {
-	String colon = ":";
-	String end_statement = "";
-
-	if (!p_indent.empty()) {
-		colon += " ";
-		end_statement += "\n";
-	}
-
-	switch (p_var.get_type()) {
-		case Variant::NIL:
-			return "null";
-		case Variant::BOOL:
-			return p_var.operator bool() ? "true" : "false";
-		case Variant::INT:
-			return itos(p_var);
-		case Variant::REAL:
-			return rtos(p_var);
-		case Variant::POOL_INT_ARRAY:
-		case Variant::POOL_REAL_ARRAY:
-		case Variant::POOL_STRING_ARRAY:
-		case Variant::ARRAY: {
-			String s = "[";
-			s += end_statement;
-			Array a = p_var;
-
-			ERR_FAIL_COND_V_MSG(p_markers.has(a.id()), "\"[...]\"", "Converting circular structure to JSON.");
-			p_markers.insert(a.id());
-
-			for (int i = 0; i < a.size(); i++) {
-				if (i > 0) {
-					s += ",";
-					s += end_statement;
-				}
-				s += _make_indent(p_indent, p_cur_indent + 1) + _print_var(a[i], p_indent, p_cur_indent + 1, p_sort_keys, p_markers);
-			}
-			s += end_statement + _make_indent(p_indent, p_cur_indent) + "]";
-			p_markers.erase(a.id());
-			return s;
-		};
-		case Variant::DICTIONARY: {
-			String s = "{";
-			s += end_statement;
-			Dictionary d = p_var;
-
-			ERR_FAIL_COND_V_MSG(p_markers.has(d.id()), "\"{...}\"", "Converting circular structure to JSON.");
-			p_markers.insert(d.id());
-
-			List<Variant> keys;
-			d.get_key_list(&keys);
-
-			if (p_sort_keys) {
-				keys.sort();
-			}
-
-			for (List<Variant>::Element *E = keys.front(); E; E = E->next()) {
-				if (E != keys.front()) {
-					s += ",";
-					s += end_statement;
-				}
-				s += _make_indent(p_indent, p_cur_indent + 1) + _print_var(String(E->get()), p_indent, p_cur_indent + 1, p_sort_keys, p_markers);
-				s += colon;
-				s += _print_var(d[E->get()], p_indent, p_cur_indent + 1, p_sort_keys, p_markers);
-			}
-
-			s += end_statement + _make_indent(p_indent, p_cur_indent) + "}";
-			p_markers.erase(d.id());
-			return s;
-		};
-		default:
-			return "\"" + String(p_var).json_escape() + "\"";
-	}
-}
-
-String JSON::print(const Variant &p_var, const String &p_indent, bool p_sort_keys) {
-	Set<const void *> markers;
-	return _print_var(p_var, p_indent, 0, p_sort_keys, markers);
-}
-

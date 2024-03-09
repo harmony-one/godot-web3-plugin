@@ -84,6 +84,7 @@ protected:
 	static void _bind_methods();
 
 public:
+	static String print(const Variant &p_var, const String &p_indent = "", bool p_sort_keys = true);
 	Error parse(const String &p_json_string, bool p_keep_text = false);
 	String get_parsed_text() const;
 
@@ -94,7 +95,7 @@ public:
 	void set_data(const Variant &p_data);
 	inline int get_error_line() const { return err_line; }
 	inline String get_error_message() const { return err_str; }
-    static String print(const Variant &p_var, const String &p_indent = "", bool p_sort_keys = true);
+    
 };
 
 class ResourceFormatLoaderJSON : public ResourceFormatLoader {

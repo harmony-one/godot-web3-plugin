@@ -15,8 +15,21 @@
 
 static Ref<ResourceFormatLoaderABI> abi_loader;
 
-void register_web3_types() {
-   ClassDB::register_class<ABI>();
+void uninitialize_web3_module(ModuleInitializationLevel p_level) {
+	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
+		return;
+	}
+
+   ResourceLoader::remove_resource_format_loader(abi_loader);
+   abi_loader.unref();
+}
+
+void initialize_web3_module(ModuleInitializationLevel p_level) {
+	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
+		return;
+	}
+
+	ClassDB::register_class<ABI>();
    ClassDB::register_class<EthBalance>();
    ClassDB::register_class<EthCall>();
    ClassDB::register_class<EthTransaction>();
@@ -30,9 +43,4 @@ void register_web3_types() {
    ResourceLoader::add_resource_format_loader(abi_loader);
 
    GLOBAL_DEF("web3/rpc_url", "");
-}
-
-void unregister_web3_types() {
-   ResourceLoader::remove_resource_format_loader(abi_loader);
-   abi_loader.unref();
 }
